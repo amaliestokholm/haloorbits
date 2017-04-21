@@ -315,7 +315,7 @@ def main(TWO=None, THREE=None, mani=None, jac=None):
     m_s = 1.989e30  # kg
     mu = m_e / (m_e + m_s)
     AU = 149597870.691
-    d = AU # assume circular orbit
+    d = 1 #AU # assume circular orbit
     r_earth = 6378  # in km
     r_sun = 695700  # in km
     
@@ -325,8 +325,10 @@ def main(TWO=None, THREE=None, mani=None, jac=None):
 
     # Initial conditions
     x1 = np.array([1.0078, 0, 0.00231796707706557, 0, 0.0118010375494954, 0])  #L2
-    t1 = 3.09326571489475 * 2#* 0.33
-    t2 = np.linspace(0, -3.09326571489475 * 0.3)
+    #x1 = np.array([0.8122,0,0,0,0.248312,0])  #L1
+    t1 = 3.09326571489475 * 0.33
+    # for the manifold calculation, we calculate backward in time
+    t2 = np.linspace(0, -3.09326571489475 * 0.3)  
 
     state_trans_0 = np.reshape(np.identity(6), 36)
     y1 = np.concatenate((x1, state_trans_0))
@@ -373,9 +375,9 @@ def main(TWO=None, THREE=None, mani=None, jac=None):
     if THREE is not None:
         fig = plt.figure()
         ax = fig.gca(projection='3d')
-        ax.set_xlabel('x [km]')
-        ax.set_ylabel('y [km]')
-        ax.set_zlabel('z [km]')
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_zlabel('z')
         #ax.set_aspect('equal')
     
         # make the Earth
@@ -385,13 +387,13 @@ def main(TWO=None, THREE=None, mani=None, jac=None):
         
         #xs_s, ys_s, zs_s = sphere(0.3)
         #ax.plot_surface(xs_s, ys_s, zs_s, cmap='hot')
-        #ax.scatter(L[:, 0], L[:, 1], L[:, 2], 'b.')
+        #ax.scatter(L[0:1, 0], L[0:1, 1], L[0:1, 2], 'b.')
         #ax.scatter(L[1, 0], L[1, 1], L[1, 2], 'ro')
         ax.plot(y1_n[:,0], y1_n[:, 1], y1_n[:, 2], 'k')
         ax.scatter(1-mu, 0,0,color='b')
-        ax.scatter(L[1,0], L[1,1], L[1,2],color='r')
         #ax.plot(y2_n[:,0], y2_n[:, 1], y2_n[:, 2], 'k')
         #set_axes_equal(ax)
+        plt.savefig('orbit.pdf')
     if TWO is not None:
         fig, ax = plt.subplots()
         fix_margins()
@@ -421,4 +423,4 @@ def main(TWO=None, THREE=None, mani=None, jac=None):
         jacobi(mu=mu, L=L)
     plt.show()
 
-main(jac=1)
+main(THREE=1)
